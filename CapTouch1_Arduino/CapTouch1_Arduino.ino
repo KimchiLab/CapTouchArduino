@@ -21,7 +21,7 @@
 Adafruit_MPR121 cap = Adafruit_MPR121();
 
 // Parameters
-const int interruptPin = 2; // 2 or 3 on Uno
+const int interruptPin = 2; // Which line to monitor for an interrupt/Reset baseline. Can be 2 or 3 on Arduino Uno
 const int ch_in = 11; // Which lines to monitor for inputs: 0 indexed. Can be 0-11 on MPR121
 const int ch_out = 13; // Which lines to monitor for inputs: 0 indexed. Can be 2-13 on Arduino Uno (0-1 used for Serial Communication)
 volatile int baseVal;
@@ -105,8 +105,13 @@ void loop() {
   //  }
 }
 
-// ResetBaseline
-// What if there is contact during this time, i.e. animal is licking?
+// Monitor Interrupt Pin to take a new baseline
+void ResetInterrupt() {
+  flag_reset = true;
+}
+
+// ResetBaseline: Hardware driven interrupt to take a new baseline in case there is a problem with initial baseline or drift
+// Can be reissued as needed if there is contact during this time by the subject
 void ResetBaseline() {
   const int numBase = 100; // Number of points to use for baseline estimates (at least 10)
   baseVal = 0; // Reset Baseline value
@@ -117,10 +122,6 @@ void ResetBaseline() {
   // Take averages for baseline values
   baseVal = baseVal  / numBase;
   flag_reset = false;
-}
-
-void ResetInterrupt() {
-  flag_reset = true;
 }
 
 
