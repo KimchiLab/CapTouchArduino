@@ -21,12 +21,13 @@
 Adafruit_MPR121 cap = Adafruit_MPR121();
 
 // Parameters
+const int interruptPin = 2; // 2 or 3 on Uno
 const int ch_in = 11; // Which lines to monitor for inputs: 0 indexed. Can be 0-11 on MPR121
 const int ch_out = 13; // Which lines to monitor for inputs: 0 indexed. Can be 2-13 on Arduino Uno (0-1 used for Serial Communication)
-const int numBase = 100; // Number of points to use for baseline estimates (at least 10)
-int baseVal;
+volatile int baseVal;
 int diffThr = 30; // Minimum difference from baseline: Adafruit uses 12, CJ 10. 1676 on 2018/05/15: Baseline = 192, Licks = 80-100, so diffThr can equal >30 easily, Few smaller licks being missed for 3654 on same day, would be fine at 20? but diff than larger licks (bimodal?)
 boolean currStatus, lastStatus;  // Status of lines: to minimize the number of digital writes: only when things change
+volatile boolean flag_reset;
 
 // Timing vars
 long ms_start;
@@ -52,20 +53,23 @@ void setup() {
   pinMode(ch_out, OUTPUT);
   digitalWriteFast(ch_out, LOW);
 
+  // Initialize input/interrupt
+  pinMode(interruptPin, INPUT);
+  attachInterrupt(digitalPinToInterrupt(interruptPin), ResetInterrupt, RISING);
+
   // Get baseline data for all inputs
   delay(1000); // Capacitance values won't be as valid <1sec after bootup
-  for (int i_base = 0; i_base < numBase; i_base++) {
-    baseVal += cap.filteredData(ch_in);
-    delay(10); // In case repeating just a few lines/channels
-  }
-  // Take averages for baseline values
-  baseVal = baseVal  / numBase;
+  ResetBaseline();
 
   Serial.println("Start");
   ms_start = millis();
 }
 
 void loop() {
+  if (flag_reset) {
+    ResetBaseline();
+  }
+
   // Capacitance drops with touch, hence "reverse/negative" logic
   int diffCurr = baseVal - cap.filteredData(ch_in);
   currStatus = diffCurr >= diffThr;
@@ -79,6 +83,19 @@ void loop() {
     lastStatus = currStatus;
   }
 
+  //  // TTL like debugging output
+  //  Serial.print(currStatus);
+  //  Serial.print(" ");
+  //  Serial.print(baseVal);
+  //  Serial.print(" ");
+  //  Serial.print(cap.baselineData(ch_in)); // Corrects too aggressively and then returns very slowly
+  //  Serial.print(" ");
+  //  Serial.print(cap.filteredData(ch_in));
+  //  Serial.print(" ");
+  //  Serial.print(diffCurr);
+  //  Serial.print(" ");
+  //  Serial.println();
+
   //  // Loop timing checks
   //  i_loop++; // Loop timing with just 1 channel: just under 600 ms for 1000 reps, so ~0.6ms/check without updates
   //  if (!(i_loop % 1000)) {
@@ -87,4 +104,23 @@ void loop() {
   //    Serial.println(millis() - ms_start);
   //  }
 }
+
+// ResetBaseline
+// What if there is contact during this time, i.e. animal is licking?
+void ResetBaseline() {
+  const int numBase = 100; // Number of points to use for baseline estimates (at least 10)
+  baseVal = 0; // Reset Baseline value
+  for (int i_base = 0; i_base < numBase; i_base++) {
+    baseVal += cap.filteredData(ch_in); // Does not work in interrupt
+    delayMicroseconds(1000); // delay and millis do not work in intertupts, want to get meaningful data
+  }
+  // Take averages for baseline values
+  baseVal = baseVal  / numBase;
+  flag_reset = false;
+}
+
+void ResetInterrupt() {
+  flag_reset = true;
+}
+
 
