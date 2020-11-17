@@ -25,7 +25,7 @@ const int interruptPin = 2; // Which line to monitor for an interrupt/Reset base
 const int ch_in = 11; // Which lines to monitor for inputs: 0 indexed. Can be 0-11 on MPR121
 const int ch_out = 13; // Which lines to monitor for inputs: 0 indexed. Can be 2-13 on Arduino Uno (0-1 used for Serial Communication)
 volatile int baseVal;
-int diffThr = 30; // Minimum difference from baseline: Adafruit uses 12, CJ 10. 1676 on 2018/05/15: Baseline = 192, Licks = 80-100, so diffThr can equal >30 easily, Few smaller licks being missed for 3654 on same day, would be fine at 20? but diff than larger licks (bimodal?)
+int diffThr = 10; // Minimum difference from baseline: Adafruit uses 12, CJ 10. 1676 on 2018/05/15: Baseline = 192, Licks = 80-100, so diffThr can equal >30 easily, Few smaller licks being missed for 3654 on same day, would be fine at 20? but diff than larger licks (bimodal?). Some being missed at 30 on 2019/02/22, due to dry spout?
 boolean currStatus, lastStatus;  // Status of lines: to minimize the number of digital writes: only when things change
 volatile boolean flag_reset;
 
@@ -36,6 +36,7 @@ int i_loop;
 // SETUP CODE: Pins and baseline
 void setup() {
   Serial.begin(115200);
+  Serial.println( __FILE__ );
 
   while (!Serial) { // needed to keep leonardo/micro from starting too fast!
     delay(10);
