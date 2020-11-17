@@ -16,6 +16,7 @@
 */
 
 #include "Adafruit_MPR121.h"
+#include "digitalWriteFast.h"
 
 Adafruit_MPR121 cap = Adafruit_MPR121();
 
@@ -43,6 +44,7 @@ int num_shift = 2; // Shift channel in -> channel out: from 0 -> 2 to avoid seri
 // SETUP CODE: Pins and baseline
 void setup() {
   Serial.begin(115200);
+  Serial.println( __FILE__ );
 
   while (!Serial) { // needed to keep leonardo/micro from starting too fast!
     delay(10);
