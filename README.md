@@ -58,4 +58,9 @@ If so, you should be able to touch the circuit and see:
 1. A small red light on the MPR121 indicating contact  
 2. A small orange light on the Arduino indicating contact  
 
+# Setup/Wiring Pictures
+## Setup with MPR121 Breakout Board and an Arduino Uno
 ![Setup with MPR121 Breakout Board and an Arduino Uno](/CapTouch1_Arduino/Setup_Breakout.jpg)
+
+## Setup with MPR121 Shield and an Arduino Uno
+![Setup with MPR121 Shield and an Arduino Uno](/CapTouch1_Arduino/Setup_Shield.jpg)
