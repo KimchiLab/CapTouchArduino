@@ -63,4 +63,5 @@ If so, you should be able to touch the circuit and see:
 ![Setup with MPR121 Breakout Board and an Arduino Uno](/CapTouch1_Arduino/Setup_Breakout.jpg)
 
 ## Setup with MPR121 Shield and an Arduino Uno
+For the MPR121 shield, the SCL, SDA, GND, and VIN connections occur via pre-soldered shield pins. Here an additional PC pin socket has been soldered onto the input line 11 area. This area can also be contacted using an alligator clip to grab the two gold cirles.
 ![Setup with MPR121 Shield and an Arduino Uno](/CapTouch1_Arduino/Setup_Shield.jpg)
