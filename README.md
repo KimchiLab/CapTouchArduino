@@ -24,36 +24,36 @@ Resetting the baseline: There is an ability to force a reset/new average. If the
 The most up to date information will typically be in the Arduino .ino files. But the following should be a fairly standard configuration, most so for the single contact version.
 
 Connections:
-  Touch contact to MPR121 input
-  Connect your single ended contact wire to the MPR121 input, for single channel typically line 11
+Touch contact to MPR121 input:
+  Connect your single ended contact wire to the MPR121 input, for single channel typically line 11  
 
-  MPR121 to Arduino: here an Uno
-  Arduino 5V to the MPR121 Vin
-  Arduino Ground to MPR121 GND
-  Arduino SCL/A5 to MPR121 SCL
-  Arduino SDA/A4 to MPR121 SDA
+  MPR121 to Arduino: here an Uno  
+  Arduino 5V to the MPR121 Vin  
+  Arduino Ground to MPR121 GND  
+  Arduino SCL/A5 to MPR121 SCL  
+  Arduino SDA/A4 to MPR121 SDA  
 
-  Arduino to a monitoring system: elsewhere a Mega running OpBox protocols. Neither of these is necessary for testing the system.
-  Arduino 13/LED is the TTL output for a touch to send to another system
-  Arduino 2 is the TTL input from another system for a reset to recalculate the baseline from another system
+Arduino to a monitoring system: elsewhere a Mega running OpBox protocols. Neither of these is necessary for testing the system.  
+  Arduino 13/LED is the TTL output for a touch to send to another system  
+  Arduino 2 is the TTL input from another system for a reset to recalculate the baseline from another system  
 
-# Configuration/Setup: Software
-Open up the CapTouch1_Arduino.ino file in the Arduino IDE (most recently tested with Arduino IDE v1.8.13).
-Make sure that the correct board is selected (e.g. Tools -> Board -> Arduino Uno)
-and the correct COM port (e.g. Tools -> Port -> COM4 (Arduino Uno)
-Uploade the code
+# Configuration/Setup: Software  
+Open up the CapTouch1_Arduino.ino file in the Arduino IDE (most recently tested with Arduino IDE v1.8.13).  
+Make sure that the correct board is selected (e.g. Tools -> Board -> Arduino Uno)  
+and the correct COM port (e.g. Tools -> Port -> COM4 (Arduino Uno)  
+Uploade the code  
 
-# Checking things work
-Open up the Arduino Serial Monitor (Tools -> Serial Monitor).
-Make sure the Baud Rate is set to 115200 baud
-You should get output similar to this:
+# Checking things work  
+Open up the Arduino Serial Monitor (Tools -> Serial Monitor).  
+Make sure the Baud Rate is set to 115200 baud  
+You should get output similar to this:  
 
-\CapTouch1_Arduino.ino
-Adafruit MPR121 Capacitive Touch sensor test
-Trying to connect to MPR121...
-MPR121 found!
-Start
+\CapTouch1_Arduino.ino  
+Adafruit MPR121 Capacitive Touch sensor test  
+Trying to connect to MPR121...  
+MPR121 found!  
+Start  
 
-If so, you should be able to touch the circuit and see:
-1. A small red light on the MPR121 indicating contact
-2. A small orange light on the Arduino indicating contact
+If so, you should be able to touch the circuit and see:  
+1. A small red light on the MPR121 indicating contact  
+2. A small orange light on the Arduino indicating contact  
