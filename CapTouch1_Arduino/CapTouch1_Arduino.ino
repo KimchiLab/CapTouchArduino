@@ -13,6 +13,19 @@
     A single channel version that monitors only a single predetermined input in order to use digitalWriteFast
     A multiple channel version that currently monitors all MPR121 inputs and maps them all to Arduino digital outputs
     Tested on an Arduino Uno & Mega, but should work with most arduinos
+
+    Connections:
+    Touch contact to MPR121 input = here line 11
+
+    MPR121 to Arduino: here an Uno
+    Arduino 5V to the MPR121 Vin
+    Arduino Ground to MPR121 GND
+    Arduino SCL/A5 to MPR121 SCL
+    Arduino SDA/A4 to MPR121 SDA
+
+    Arduino to a monitoring system: elsewhere a Mega running OpBox protocols
+    Arduino 13/LED is the TTL output for a touch to send to another system
+    Arduino 2 is the TTL input from another system for a reset to recalculate the baseline from another system
 */
 
 #include "Adafruit_MPR121.h"
@@ -21,9 +34,9 @@
 Adafruit_MPR121 cap = Adafruit_MPR121();
 
 // Parameters
-const int interruptPin = 2; // Which line to monitor for an interrupt/Reset baseline. Can be 2 or 3 on Arduino Uno
-const int ch_in = 11; // Which lines to monitor for inputs: 0 indexed. Can be 0-11 on MPR121
-const int ch_out = 13; // Which lines to monitor for inputs: 0 indexed. Can be 2-13 on Arduino Uno (0-1 used for Serial Communication)
+const int interruptPin = 2; // Which line to monitor for an interrupt/Reset baseline on the Arduino. Can be 2 or 3 on Arduino Uno
+const int ch_in = 11; // Which lines to monitor for inputs on the MPR121: 0 indexed. Can be 0-11 on MPR121
+const int ch_out = 13; // Which lines to use as outputs: 0 indexed. Can be 2-13 on Arduino Uno (0-1 used for Serial Communication)
 volatile int baseVal;
 int diffThr = 10; // Minimum difference from baseline: Adafruit uses 12, CJ 10. 1676 on 2018/05/15: Baseline = 192, Licks = 80-100, so diffThr can equal >30 easily, Few smaller licks being missed for 3654 on same day, would be fine at 20? but diff than larger licks (bimodal?). Some being missed at 30 on 2019/02/22, due to dry spout?
 boolean currStatus, lastStatus;  // Status of lines: to minimize the number of digital writes: only when things change
@@ -42,17 +55,17 @@ void setup() {
     delay(10);
   }
 
-  Serial.println("Adafruit MPR121 Capacitive Touch sensor test");
+  // Initialize output pins
+  pinMode(ch_out, OUTPUT);
+  digitalWriteFast(ch_out, LOW);
 
+  Serial.println("Adafruit MPR121 Capacitive Touch sensor test");
+  Serial.println("Trying to connect to MPR121...");
   if (!cap.begin(0x5A)) {
     Serial.println("MPR121 not found, check wiring?");
     while (1);
   }
   Serial.println("MPR121 found!");
-
-  // Initialize output pins
-  pinMode(ch_out, OUTPUT);
-  digitalWriteFast(ch_out, LOW);
 
   // Initialize input/interrupt
   pinMode(interruptPin, INPUT);
@@ -124,5 +137,3 @@ void ResetBaseline() {
   baseVal = baseVal  / numBase;
   flag_reset = false;
 }
-
-
